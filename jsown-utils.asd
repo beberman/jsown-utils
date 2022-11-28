@@ -1,4 +1,4 @@
-(asdf:defsystem :jsown-utils
+(asdf:defsystem #:jsown-utils
   :name "jsown-utils"
   :description "Utilities for Common Lisp JSON library jsown"
   :version "0.0.1"

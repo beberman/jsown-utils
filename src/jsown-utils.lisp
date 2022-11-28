@@ -2,15 +2,15 @@
 
 ;;; pretty print utils
 
-(defun pretty-json (json &key (level 0))
+(defun pretty-json (json &optional (stream nil) &key (level 0))
   (if (stringp json)
       (pretty-json (jsown:parse json))
       (if (eq :obj (car json))
           ;; json is an object
-          (format nil (format nil "{~~%~~{~~A~~^,~~%~~}~~%~~~A@A}" (* level 4))
+          (format stream (format stream "{~~%~~{~~A~~^,~~%~~}~~%~~~A@A}" (* level 4))
                   (loop for (key . value) in (cdr json)
-                     collect (format nil
-                                     (format nil "~~~A@A\"~~A\": ~~:[~~S~~;~~A~~]" (* (1+ level) 4))
+                     collect (format stream
+                                     (format stream "~~~A@A\"~~A\": ~~:[~~S~~;~~A~~]" (* (1+ level) 4))
                                      ""
                                      key
                                      (listp value)
@@ -21,23 +21,23 @@
           ;; json ia an array
           (if (eq (length json) 0)
               "[]"
-              (format nil (format nil "[~~%~~~A@A~~{~~A~~^,~~%~A~~}~~%~~~A@A]"
+              (format stream (format stream "[~~%~~~A@A~~{~~A~~^,~~%~A~~}~~%~~~A@A]"
                                   (* (1+ level) 4)
-                                  (format nil (format nil "~~~A@A" (* (1+ level) 4))
+                                  (format stream (format stream "~~~A@A" (* (1+ level) 4))
                                           "")
                                   (* level 4))
                       ""
                       (loop for value in json
-                         collect (format nil
-                                         (format nil "~~~A@A~~A" (* (1+ level) 4))
+                         collect (format stream
+                                         (format stream "~~~A@A~~A" (* (1+ level) 4))
                                          (if (listp value)
                                              (pretty-json value :level (1+ level))
                                              value)
                                          ""))
                       "")))))
 
-(defun pprint-json (json)
-  (format t "~A~%" (pretty-json json))
+(defun pprint-json (json &optional (stream nil))
+  (format t "~A~%" (pretty-json json stream))
   (values))
 
 ;;; accessor utils
